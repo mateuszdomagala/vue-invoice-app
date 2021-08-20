@@ -1,15 +1,7 @@
 <template>
   <div class="form-wrapper">
-    <form @submit.prevent="handleSignup">
-      <h2 class="form-wrapper__title">Signup</h2>
-      <label for="displayName">Name:</label>
-      <input
-        id="displayName"
-        type="text"
-        placeholder="Name"
-        v-model="displayName"
-        required
-      />
+    <form @submit.prevent="handleLogin">
+      <h2 class="form-wrapper__title">Login</h2>
       <label for="email">Email:</label>
       <input
         id="email"
@@ -27,40 +19,39 @@
         required
       />
       <div class="form-wrapper__error" v-if="error">{{ error }}</div>
-      <button class="btn btn--purple" v-if="!isPending">Sign up</button>
+      <button class="btn btn--purple" v-if="!isPending">Login</button>
       <button class="btn btn--purple" v-if="isPending" disabled>
-        Signing up...
+        Logging in...
       </button>
     </form>
     <p class="form-wrapper__link">
-      Already a member?
-      <router-link :to="{ name: 'Login' }">Sign in</router-link>
+      Not a member?
+      <router-link :to="{ name: 'Signup' }">Sign up</router-link>
     </p>
   </div>
 </template>
 
 <script>
 import { ref } from "vue";
-import useSignup from "../composables/useSignup";
 import { useRouter } from "vue-router";
+import useLogin from "../composables/useLogin";
 
 export default {
   setup() {
-    const displayName = ref("");
     const email = ref("");
     const password = ref("");
-    const { error, signup, isPending } = useSignup();
+    const { error, login, isPending } = useLogin();
     const router = useRouter();
 
-    const handleSignup = async () => {
-      await signup(email.value, password.value, displayName.value);
+    const handleLogin = async () => {
+      await login(email.value, password.value);
 
       if (!error.value) {
         router.push({ name: "Home" });
       }
     };
 
-    return { displayName, email, password, handleSignup, error, isPending };
+    return { email, password, error, isPending, handleLogin };
   },
 };
 </script>
