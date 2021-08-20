@@ -65,7 +65,7 @@ body {
 
 .form-wrapper {
   margin: auto;
-  min-width: 300px;
+  width: 300px;
   border: 1px solid var(--border-color-primary);
   border-radius: 5px;
   padding: 20px;
