@@ -13,6 +13,15 @@ const requireAuth = (to, from, next) => {
   }
 };
 
+const isLoggedIn = (to, from, next) => {
+  const user = auth.currentUser;
+  if (user) {
+    next({ name: "Home" });
+  } else {
+    next();
+  }
+};
+
 const routes = [
   {
     path: "/",
@@ -24,11 +33,13 @@ const routes = [
     path: "/signup",
     name: "Signup",
     component: Signup,
+    beforeEnter: isLoggedIn,
   },
   {
     path: "/login",
     name: "Login",
     component: Login,
+    beforeEnter: isLoggedIn,
   },
 ];
 
