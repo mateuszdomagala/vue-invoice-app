@@ -6,6 +6,16 @@
       /></router-link>
     </div>
     <div class="navbar__items">
+      <div class="navbar__toggle">
+        <button @click="toggleTheme">
+          <img
+            v-if="!darkMode"
+            src="../assets/icon-moon.svg"
+            alt="darkmode icon"
+          />
+          <img v-else src="../assets/icon-sun.svg" alt="lightmode icon" />
+        </button>
+      </div>
       <div class="navbar__logout" v-if="user">
         <button class="btn btn--purple" @click="handleLogout">
           <img src="../assets/sign-out-alt.svg" alt="sign-out" />
@@ -19,12 +29,15 @@
 import useLogout from "../composables/useLogout";
 import getUser from "../composables/getUser";
 import { useRouter } from "vue-router";
+import { ref, onMounted } from "vue";
 
 export default {
   setup() {
     const { logout, error } = useLogout();
     const { user } = getUser();
     const router = useRouter();
+    const theme = ref(null);
+    const darkMode = ref(null);
 
     const handleLogout = async () => {
       await logout();
@@ -33,7 +46,30 @@ export default {
       }
     };
 
-    return { handleLogout, user };
+    const toggleTheme = () => {
+      if (theme.value == "dark") {
+        theme.value = "light";
+        document.documentElement.setAttribute("data-theme", "light");
+        localStorage.setItem("theme", "light");
+      } else {
+        theme.value = "dark";
+        document.documentElement.setAttribute("data-theme", "dark");
+        localStorage.setItem("theme", "dark");
+      }
+      darkMode.value = !darkMode.value;
+    };
+
+    onMounted(() => {
+      theme.value = localStorage.getItem("theme");
+      if (theme.value) {
+        document.documentElement.setAttribute("data-theme", theme.value);
+        if (theme.value == "dark") {
+          darkMode.value = true;
+        }
+      }
+    });
+
+    return { handleLogout, user, darkMode, toggleTheme };
   },
 };
 </script>
@@ -110,6 +146,33 @@ export default {
       height: 30px;
       border-radius: 50%;
       padding: 0;
+    }
+  }
+
+  &__items {
+    display: flex;
+    align-items: center;
+
+    @media (min-width: 900px) {
+      flex-direction: column;
+    }
+  }
+
+  &__toggle {
+    padding: 0 30px;
+
+    @media (min-width: 900px) {
+      padding: 30px 0;
+    }
+
+    & button {
+      cursor: pointer;
+      border: none;
+      background-color: transparent;
+    }
+
+    &:hover {
+      opacity: 0.7;
     }
   }
 }
