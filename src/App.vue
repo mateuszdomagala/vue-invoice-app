@@ -51,6 +51,7 @@ body {
   font-family: "Spartan", sans-serif;
   color: var(--font-color-primary);
   background-color: var(--background-color);
+  transition: 0.2s;
 }
 
 .wrapper {
