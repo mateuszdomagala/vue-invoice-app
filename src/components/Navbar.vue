@@ -5,9 +5,38 @@
         ><img src="../assets/logo.svg" alt="logo"
       /></router-link>
     </div>
-    <div class="navbar__items"></div>
+    <div class="navbar__items">
+      <div class="navbar__logout" v-if="user">
+        <button class="btn btn--purple" @click="handleLogout">
+          <img src="../assets/sign-out-alt.svg" alt="sign-out" />
+        </button>
+      </div>
+    </div>
   </div>
 </template>
+
+<script>
+import useLogout from "../composables/useLogout";
+import getUser from "../composables/getUser";
+import { useRouter } from "vue-router";
+
+export default {
+  setup() {
+    const { logout, error } = useLogout();
+    const { user } = getUser();
+    const router = useRouter();
+
+    const handleLogout = async () => {
+      await logout();
+      if (!error.value) {
+        router.push({ name: "Login" });
+      }
+    };
+
+    return { handleLogout, user };
+  },
+};
+</script>
 
 <style lang="scss" scoped>
 .navbar {
@@ -17,6 +46,7 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
 
   @media (min-width: 900px) {
     min-height: 100%;
@@ -57,6 +87,29 @@
       &:hover {
         transform: scale(1.1);
       }
+    }
+  }
+
+  &__logout {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 30px;
+    border-left: 1px solid var(--font-color-tertiary);
+    height: 90px;
+
+    @media (min-width: 900px) {
+      padding: 30px 0;
+      border-left: 0;
+      border-top: 1px solid var(--font-color-tertiary);
+      width: 90px;
+    }
+
+    & button {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      padding: 0;
     }
   }
 }

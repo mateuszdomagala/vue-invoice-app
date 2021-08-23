@@ -131,7 +131,6 @@ label {
   border: none;
   font-size: 0.75rem;
   font-weight: 700;
-  margin-right: 8px;
   color: #fff;
   transition: 0.2s;
 
