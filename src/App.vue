@@ -25,9 +25,13 @@ export default {
   --background-color: rgb(248, 248, 251);
   --background-nav-color: rgb(55, 58, 83);
   --background-box-color: rgb(255, 255, 255);
+  --background-modal-colar: rgb(255, 255, 255);
   --button-color-primary: rgb(123, 92, 250);
   --button-color-primary-light: rgb(146, 119, 255);
+  --button-color-secondary: rgb(246, 248, 254);
+  --button-color-secondary-dark: rgb(224, 228, 250);
   --error-color: rgb(236, 85, 85);
+  --error-color-dark: rgb(219, 47, 47);
 }
 
 [data-theme="dark"] {
@@ -39,6 +43,8 @@ export default {
   --background-color: rgb(20, 22, 37);
   --background-nav-color: rgb(30, 33, 57);
   --background-box-color: rgb(30, 33, 57);
+  --background-modal-colar: rgb(20, 22, 36);
+  --button-color-secondary: rgb(37, 41, 70);
 }
 
 * {
@@ -103,7 +109,8 @@ body {
   }
 }
 
-input {
+input,
+select {
   outline: none;
   border: 1px solid var(--border-color-primary);
   background-color: var(--background-box-color);
@@ -117,6 +124,10 @@ input {
 
   &:focus {
     border-color: var(--border-color-secondary);
+  }
+
+  &:invalid {
+    border: 1px solid var(--error-color);
   }
 }
 
@@ -145,6 +156,33 @@ label {
 
   &--purple {
     background-color: var(--button-color-primary);
+  }
+
+  &--dark-grayish-blue {
+    background-color: var(--background-nav-color);
+    color: var(--font-color-tertiary);
+
+    &:hover {
+      background-color: #000;
+    }
+  }
+
+  &--light-gray {
+    background-color: var(--button-color-secondary);
+    color: var(--font-color-tertiary);
+
+    &:hover {
+      background-color: var(--button-color-secondary-dark);
+    }
+  }
+
+  &--error {
+    color: var(--button-color-secondar);
+    background-color: var(--error-color);
+
+    &:hover {
+      background-color: var(--error-color-dark);
+    }
   }
 }
 </style>
