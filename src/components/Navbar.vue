@@ -84,6 +84,7 @@ export default {
   justify-content: space-between;
   align-items: center;
   z-index: 2;
+  position: fixed;
 
   @media (min-width: 900px) {
     min-height: 100%;
