@@ -215,6 +215,7 @@
 import { ref, watchEffect } from "vue";
 import useCollection from "../composables/useCollection";
 import getUser from "../composables/getUser";
+import { timestamp } from "../firebase/config";
 
 export default {
   setup(props, { emit }) {
@@ -243,6 +244,7 @@ export default {
     const isRequired = ref(false);
     const { user } = getUser();
     const invoiceItemListError = ref(null);
+    const invoiceTotal = ref(null);
 
     const createId = () => {
       const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -274,7 +276,7 @@ export default {
       invoiceItemList.value.push({
         id: createId(),
         itemName: "",
-        qty: "",
+        qty: 0,
         price: 0,
         total: 0,
       });
@@ -283,6 +285,13 @@ export default {
     const deleteItem = (id) => {
       invoiceItemList.value = invoiceItemList.value.filter(
         (item) => item.id !== id
+      );
+    };
+
+    const sumInvoiceTotal = () => {
+      invoiceTotal.value = invoiceItemList.value.reduce(
+        (acc, item) => acc + item.total,
+        0
       );
     };
 
@@ -295,6 +304,8 @@ export default {
       }
 
       if (!invoiceItemListError.value) {
+        sumInvoiceTotal();
+
         await addDoc({
           billerStreetAddress: billerStreetAddress.value,
           billerCity: billerCity.value,
@@ -310,8 +321,10 @@ export default {
           paymentDue: paymentDue.value,
           projectDescription: projectDescription.value,
           invoiceItemList: invoiceItemList.value,
+          invoiceTotal: invoiceTotal.value,
           invoiceStatus: invoiceStatus.value,
           userId: user.value.uid,
+          timestamp: timestamp,
         });
 
         if (!error.value) {

@@ -6,8 +6,8 @@
   </div>
   <div class="container">
     <div class="header">
-      <!-- <div class="header__invoices">Invoices</div>
-      <div class="header__filter">Filter by Status</div> -->
+      <div class="header__invoices">Invoices</div>
+      <div class="header__filter">Filter by Status</div>
       <button
         class="header__button btn btn--purple"
         type="button"
@@ -16,16 +16,19 @@
         <img src="../assets/icon-plus.svg" alt="add icon" />New Invoice
       </button>
     </div>
+    <invoices-list />
   </div>
 </template>
 
 <script>
 import InvoiceModal from "../components/InvoiceModal.vue";
+import InvoicesList from "../components/InvoicesList.vue";
+
 import { ref } from "vue";
 
 export default {
   name: "Home",
-  components: { InvoiceModal },
+  components: { InvoiceModal, InvoicesList },
   setup() {
     const newInvoice = ref(false);
 
@@ -63,13 +66,16 @@ export default {
 
 .container {
   margin: 0 auto;
+  padding: 20px;
+  max-width: 700px;
+  width: 100%;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 50px;
+  margin: 50px 0;
 
   &__button {
     display: flex;
@@ -82,6 +88,16 @@ export default {
       border-radius: 50%;
       padding: 10px;
     }
+  }
+
+  &__invoices {
+    flex: 2;
+    border: 1px solid red;
+  }
+
+  &__filter {
+    flex: 1;
+    border: 1px solid red;
   }
 }
 </style>

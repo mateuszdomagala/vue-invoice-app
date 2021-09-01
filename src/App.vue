@@ -30,6 +30,12 @@ export default {
   --button-color-primary-light: rgb(146, 119, 255);
   --button-color-secondary: rgb(246, 248, 254);
   --button-color-secondary-dark: rgb(224, 228, 250);
+  --status-color-paid: rgb(51, 214, 159);
+  --status-bg-color-paid: rgba(48,213,155,0.0571);
+  --status-color-pending: rgb(255, 140, 0);
+  --status-bg-color-pending: rgba(255,140,0,0.0571);
+  --status-color-draft: rgb(55, 59, 83);
+  --status-bg-color-draft: rgba(55,58,83,0.0571);
   --error-color: rgb(236, 85, 85);
   --error-color-dark: rgb(219, 47, 47);
 }
@@ -45,6 +51,8 @@ export default {
   --background-box-color: rgb(30, 33, 57);
   --background-modal-colar: rgb(20, 22, 36);
   --button-color-secondary: rgb(37, 41, 70);
+  --status-color-draft: rgb(223, 227, 250);
+  --status-bg-color-draft: rgba(223, 227, 250, 0.06);
 }
 
 * {
