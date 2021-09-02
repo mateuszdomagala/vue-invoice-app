@@ -24,7 +24,7 @@
       </div>
     </div>
   </div>
-  <div v-else class="empty"> 
+  <div v-else class="empty">
     <img src="../assets/illustration-empty.svg" alt="no invoices" />
     <h2>There is nothing here</h2>
     <p>Create an invoice by clicking the new invoice button and get started</p>
@@ -32,18 +32,9 @@
 </template>
 
 <script>
-import getCollection from "../composables/getCollection";
-
 export default {
   name: "InvoicesList",
-  setup() {
-    const { invoices, error } = getCollection("invoices", "timestamp");
-
-    return {
-      invoices,
-      error,
-    };
-  },
+  props: ["invoices", "error"],
 };
 </script>
 
