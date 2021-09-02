@@ -6,7 +6,15 @@
   </div>
   <div class="container">
     <div class="header">
-      <div class="header__invoices">Invoices</div>
+      <div class="header__invoices">
+        <h1>Invoices</h1>
+        <p class="header__invoices__total">
+          There are {{ invoices.length }} total invoices
+        </p>
+        <p class="header__invoices__total--short">
+          {{ invoices.length }} invoices
+        </p>
+      </div>
       <div class="header__filter">Filter by Status</div>
       <button
         class="header__button btn btn--purple"
@@ -16,13 +24,14 @@
         <img src="../assets/icon-plus.svg" alt="add icon" />New Invoice
       </button>
     </div>
-    <invoices-list />
+    <invoices-list :invoices="invoices" :error="error" />
   </div>
 </template>
 
 <script>
 import InvoiceModal from "../components/InvoiceModal.vue";
 import InvoicesList from "../components/InvoicesList.vue";
+import getCollection from "../composables/getCollection";
 
 import { ref } from "vue";
 
@@ -31,6 +40,7 @@ export default {
   components: { InvoiceModal, InvoicesList },
   setup() {
     const newInvoice = ref(false);
+    const { invoices, error } = getCollection("invoices", "timestamp");
 
     const toggleInvoiceModal = () => {
       newInvoice.value = !newInvoice.value;
@@ -39,6 +49,8 @@ export default {
     return {
       newInvoice,
       toggleInvoiceModal,
+      invoices,
+      error,
     };
   },
 };
@@ -75,7 +87,12 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 50px 0;
+  margin-top: 120px;
+  margin-bottom: 50px;
+
+  @media (min-width: 900px) {
+    margin: 50px 0;
+  }
 
   &__button {
     display: flex;
@@ -92,12 +109,33 @@ export default {
 
   &__invoices {
     flex: 2;
-    border: 1px solid red;
+
+    h1 {
+      font-weight: 700;
+    }
+
+    p {
+      font-size: 0.8rem;
+      margin-top: 5px;
+    }
+
+    &__total {
+      display: none;
+
+      @media (min-width: 900px) {
+        display: block;
+      }
+
+      &--short {
+        @media (min-width: 900px) {
+          display: none;
+        }
+      }
+    }
   }
 
   &__filter {
     flex: 1;
-    border: 1px solid red;
   }
 }
 </style>
