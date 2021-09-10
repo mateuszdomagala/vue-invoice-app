@@ -15,7 +15,9 @@
           {{ invoices.length }} invoices
         </p>
       </div>
-      <div class="header__filter">Filter by Status</div>
+      <div class="header__filter">
+        <filter-by-status @get-statuses="changeStatuses" />
+      </div>
       <button
         class="header__button btn btn--purple"
         type="button"
@@ -24,33 +26,50 @@
         <img src="../assets/icon-plus.svg" alt="add icon" />New Invoice
       </button>
     </div>
-    <invoices-list :invoices="invoices" :error="error" />
+    <invoices-list :invoices="filteredInvoices" :error="error" />
   </div>
 </template>
 
 <script>
 import InvoiceModal from "../components/InvoiceModal.vue";
 import InvoicesList from "../components/InvoicesList.vue";
+import FilterByStatus from "../components/FilterByStatus.vue";
 import getCollection from "../composables/getCollection";
 
-import { ref } from "vue";
+import { computed, ref } from "vue";
 
 export default {
   name: "Home",
-  components: { InvoiceModal, InvoicesList },
+  components: { InvoiceModal, InvoicesList, FilterByStatus },
   setup() {
     const newInvoice = ref(false);
     const { invoices, error } = getCollection("invoices", "timestamp");
+    const checkedStatuses = ref([]);
 
     const toggleInvoiceModal = () => {
       newInvoice.value = !newInvoice.value;
     };
+
+    const changeStatuses = (statuses) => {
+      checkedStatuses.value = statuses;
+    };
+
+    const filteredInvoices = computed(() => {
+      if (checkedStatuses.value.length == 0) return invoices.value;
+
+      return invoices.value.filter((invoice) =>
+        checkedStatuses.value.includes(invoice.invoiceStatus)
+      );
+    });
 
     return {
       newInvoice,
       toggleInvoiceModal,
       invoices,
       error,
+      checkedStatuses,
+      filteredInvoices,
+      changeStatuses,
     };
   },
 };
