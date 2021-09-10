@@ -1,28 +1,34 @@
 <template>
   <div v-if="error">{{ error }}</div>
   <div v-if="invoices.length">
-    <div class="invoice-box" v-for="(invoice, index) in invoices" :key="index">
-      <div class="invoice-box__left">
-        <p class="invoice-box__id">
-          <span class="invoice-box__id-hash">#</span>{{ invoice.id }}
-        </p>
-        <p class="invoice-box__payment-due">Due {{ invoice.paymentDue }}</p>
-        <p class="invoice-box__client-name">{{ invoice.clientName }}</p>
+    <transition-group name="list">
+      <div
+        class="invoice-box"
+        v-for="(invoice, index) in invoices"
+        :key="index"
+      >
+        <div class="invoice-box__left">
+          <p class="invoice-box__id">
+            <span class="invoice-box__id-hash">#</span>{{ invoice.id }}
+          </p>
+          <p class="invoice-box__payment-due">Due {{ invoice.paymentDue }}</p>
+          <p class="invoice-box__client-name">{{ invoice.clientName }}</p>
+        </div>
+        <div class="invoice-box__right">
+          <p class="invoice-box__total">${{ invoice.invoiceTotal }}</p>
+          <p
+            class="invoice-box__status"
+            :class="{
+              draft: invoice.invoiceStatus == 'draft',
+              pending: invoice.invoiceStatus == 'pending',
+              paid: invoice.invoiceStatus == 'paid',
+            }"
+          >
+            {{ invoice.invoiceStatus }}
+          </p>
+        </div>
       </div>
-      <div class="invoice-box__right">
-        <p class="invoice-box__total">${{ invoice.invoiceTotal }}</p>
-        <p
-          class="invoice-box__status"
-          :class="{
-            draft: invoice.invoiceStatus == 'draft',
-            pending: invoice.invoiceStatus == 'pending',
-            paid: invoice.invoiceStatus == 'paid',
-          }"
-        >
-          {{ invoice.invoiceStatus }}
-        </p>
-      </div>
-    </div>
+    </transition-group>
   </div>
   <div v-else class="empty">
     <img src="../assets/illustration-empty.svg" alt="no invoices" />
@@ -172,5 +178,15 @@ export default {
   align-items: center;
   gap: 20px;
   padding: 30px;
+}
+
+.list-enter-active,
+.list-leave-active {
+  transition: all 1s ease;
+}
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
 }
 </style>
