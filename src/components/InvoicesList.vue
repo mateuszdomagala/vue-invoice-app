@@ -2,31 +2,33 @@
   <div v-if="error">{{ error }}</div>
   <div v-if="invoices.length">
     <transition-group name="list">
-      <div
-        class="invoice-box"
-        v-for="(invoice, index) in invoices"
-        :key="index"
-      >
-        <div class="invoice-box__left">
-          <p class="invoice-box__id">
-            <span class="invoice-box__id-hash">#</span>{{ invoice.id }}
-          </p>
-          <p class="invoice-box__payment-due">Due {{ invoice.paymentDue }}</p>
-          <p class="invoice-box__client-name">{{ invoice.clientName }}</p>
-        </div>
-        <div class="invoice-box__right">
-          <p class="invoice-box__total">${{ invoice.invoiceTotal }}</p>
-          <p
-            class="invoice-box__status"
-            :class="{
-              draft: invoice.invoiceStatus == 'draft',
-              pending: invoice.invoiceStatus == 'pending',
-              paid: invoice.invoiceStatus == 'paid',
-            }"
-          >
-            {{ invoice.invoiceStatus }}
-          </p>
-        </div>
+      <div v-for="(invoice, index) in invoices" :key="index">
+        <router-link :to="{ name: 'InvoicePage', params: { id: invoice.id } }">
+          <div class="invoice-box">
+            <div class="invoice-box__left">
+              <p class="invoice-box__id">
+                <span class="invoice-box__id-hash">#</span>{{ invoice.id }}
+              </p>
+              <p class="invoice-box__payment-due">
+                Due {{ invoice.paymentDue }}
+              </p>
+              <p class="invoice-box__client-name">{{ invoice.clientName }}</p>
+            </div>
+            <div class="invoice-box__right">
+              <p class="invoice-box__total">${{ invoice.invoiceTotal }}</p>
+              <p
+                class="status"
+                :class="{
+                  draft: invoice.invoiceStatus == 'draft',
+                  pending: invoice.invoiceStatus == 'pending',
+                  paid: invoice.invoiceStatus == 'paid',
+                }"
+              >
+                {{ invoice.invoiceStatus }}
+              </p>
+            </div>
+          </div>
+        </router-link>
       </div>
     </transition-group>
   </div>
@@ -123,52 +125,11 @@ export default {
     font-size: 1rem;
     font-weight: 700;
   }
+}
 
-  &__status {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-width: 100px;
-    padding: 12px;
-    border-radius: 10px;
-    text-transform: capitalize;
-    font-weight: 700;
-
-    &::before {
-      content: "";
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      margin-right: 8px;
-    }
-
-    &.draft {
-      color: var(--status-color-draft);
-      background-color: var(--status-bg-color-draft);
-
-      &::before {
-        background-color: var(--status-color-draft);
-      }
-    }
-
-    &.pending {
-      color: var(--status-color-pending);
-      background-color: var(--status-bg-color-pending);
-
-      &::before {
-        background-color: var(--status-color-pending);
-      }
-    }
-
-    &.paid {
-      color: var(--status-color-paid);
-      background-color: var(--status-bg-color-paid);
-
-      &::before {
-        background-color: var(--status-color-paid);
-      }
-    }
-  }
+a {
+  color: inherit;
+  text-decoration: inherit;
 }
 
 .empty {

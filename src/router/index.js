@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { auth } from "../firebase/config";
 import Home from "../views/Home.vue";
+import InvoicePage from "../views/InvoicePage.vue";
 import Signup from "../views/Signup.vue";
 import Login from "../views/Login.vue";
 
@@ -28,6 +29,13 @@ const routes = [
     name: "Home",
     component: Home,
     beforeEnter: requireAuth,
+  },
+  {
+    path: "/invoice/:id",
+    name: "InvoicePage",
+    component: InvoicePage,
+    beforeEnter: requireAuth,
+    props: true,
   },
   {
     path: "/signup",
