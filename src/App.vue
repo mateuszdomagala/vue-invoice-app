@@ -31,11 +31,14 @@ export default {
   --button-color-secondary: rgb(246, 248, 254);
   --button-color-secondary-dark: rgb(224, 228, 250);
   --status-color-paid: rgb(51, 214, 159);
-  --status-bg-color-paid: rgba(48,213,155,0.0571);
+  --status-bg-color-paid: rgba(48, 213, 155, 0.0571);
   --status-color-pending: rgb(255, 140, 0);
-  --status-bg-color-pending: rgba(255,140,0,0.0571);
+  --status-bg-color-pending: rgba(255, 140, 0, 0.0571);
   --status-color-draft: rgb(55, 59, 83);
-  --status-bg-color-draft: rgba(55,58,83,0.0571);
+  --status-bg-color-draft: rgba(55, 58, 83, 0.0571);
+  --table-color: rgb(255, 255, 255);
+  --table-bg-color-primary: rgb(249, 250, 254);
+  --table-bg-color-secondary: rgb(55, 59, 83);
   --error-color: rgb(236, 85, 85);
   --error-color-dark: rgb(219, 47, 47);
 }
@@ -53,6 +56,8 @@ export default {
   --button-color-secondary: rgb(37, 41, 70);
   --status-color-draft: rgb(223, 227, 250);
   --status-bg-color-draft: rgba(223, 227, 250, 0.06);
+  --table-bg-color-primary: rgb(37, 41, 69);
+  --table-bg-color-secondary: rgb(12, 14, 22);
 }
 
 * {
@@ -190,6 +195,52 @@ label {
 
     &:hover {
       background-color: var(--error-color-dark);
+    }
+  }
+}
+
+.status {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 100px;
+  padding: 12px;
+  border-radius: 10px;
+  text-transform: capitalize;
+  font-weight: 700;
+
+  &::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 8px;
+  }
+
+  &.draft {
+    color: var(--status-color-draft);
+    background-color: var(--status-bg-color-draft);
+
+    &::before {
+      background-color: var(--status-color-draft);
+    }
+  }
+
+  &.pending {
+    color: var(--status-color-pending);
+    background-color: var(--status-bg-color-pending);
+
+    &::before {
+      background-color: var(--status-color-pending);
+    }
+  }
+
+  &.paid {
+    color: var(--status-color-paid);
+    background-color: var(--status-bg-color-paid);
+
+    &::before {
+      background-color: var(--status-color-paid);
     }
   }
 }
