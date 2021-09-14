@@ -18,7 +18,15 @@
             >{{ invoice.invoiceStatus }}</span
           >
         </div>
-        <div class="invoice-header__buttons">Buttons</div>
+        <div class="invoice-header__buttons">
+          <button
+            class="btn btn--purple"
+            @click="updateStatus"
+            v-if="invoice.invoiceStatus == 'pending'"
+          >
+            Mark as Paid
+          </button>
+        </div>
       </div>
       <div class="invoice-body">
         <div class="invoice-body__from">
@@ -90,19 +98,35 @@
     </div>
     <div v-else>{{ error }}</div>
   </div>
-  <div class="mobile-buttons">Buttons</div>
+  <div v-if="invoice" class="mobile-buttons">
+    <button
+      class="btn btn--purple"
+      @click="updateStatus"
+      v-if="invoice.invoiceStatus == 'pending'"
+    >
+      Mark as Paid
+    </button>
+  </div>
 </template>
 
 <script>
 import getDocument from "@/composables/getDocument";
+import useDocument from "@/composables/useDocument";
 
 export default {
   name: "InvoicePage",
   props: ["id"],
   setup(props) {
     const { invoice, error } = getDocument("invoices", props.id);
+    const { updateDoc } = useDocument("invoices", props.id);
 
-    return { invoice, error };
+    const updateStatus = async () => {
+      await updateDoc({
+        invoiceStatus: "paid",
+      });
+    };
+
+    return { invoice, error, updateStatus };
   },
 };
 </script>
@@ -306,7 +330,9 @@ export default {
   position: fixed;
   bottom: 0;
   width: 100%;
+  padding: 25px;
   background-color: var(--background-box-color);
+  box-shadow: rgba(73, 73, 94, 0.2) 0px 7px 29px 0px;
 
   @media (min-width: 700px) {
     display: none;
