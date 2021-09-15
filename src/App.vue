@@ -190,7 +190,7 @@ label {
   }
 
   &--error {
-    color: var(--button-color-secondar);
+    color: var(--table-color);
     background-color: var(--error-color);
 
     &:hover {
