@@ -26,6 +26,7 @@
           >
             Mark as Paid
           </button>
+          <button class="btn btn--error" @click="toggleModal">Delete</button>
         </div>
       </div>
       <div class="invoice-body">
@@ -106,19 +107,47 @@
     >
       Mark as Paid
     </button>
+    <button class="btn btn--error" @click="toggleModal">Delete</button>
   </div>
+  <transition name="modal">
+    <modal v-if="showModal">
+      <template v-slot:header>
+        <h3>Confirm Deletion</h3>
+      </template>
+      <template v-slot:body>
+        <p>
+          Are you sure you want to delete invoice #{{ invoice.id }}? This action
+          cannot be undone.
+        </p>
+      </template>
+      <template v-slot:footer>
+        <button class="btn btn--light-gray" @click="toggleModal">Close</button>
+        <button class="btn btn--error" @click="deleteInvoice">Delete</button>
+      </template>
+    </modal>
+  </transition>
 </template>
 
 <script>
-import getDocument from "@/composables/getDocument";
-import useDocument from "@/composables/useDocument";
+import getDocument from "../composables/getDocument";
+import useDocument from "../composables/useDocument";
+import Modal from "../components/Modal.vue";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
 
 export default {
   name: "InvoicePage",
   props: ["id"],
+  components: { Modal },
   setup(props) {
     const { invoice, error } = getDocument("invoices", props.id);
-    const { updateDoc } = useDocument("invoices", props.id);
+    const { updateDoc, deleteDoc } = useDocument("invoices", props.id);
+    const showModal = ref(false);
+    const router = useRouter();
+
+    const toggleModal = () => {
+      showModal.value = !showModal.value;
+    };
 
     const updateStatus = async () => {
       await updateDoc({
@@ -126,7 +155,19 @@ export default {
       });
     };
 
-    return { invoice, error, updateStatus };
+    const deleteInvoice = async () => {
+      await deleteDoc();
+      router.push({ name: "Home" });
+    };
+
+    return {
+      invoice,
+      error,
+      updateStatus,
+      deleteInvoice,
+      showModal,
+      toggleModal,
+    };
   },
 };
 </script>
@@ -337,5 +378,19 @@ export default {
   @media (min-width: 700px) {
     display: none;
   }
+}
+
+button:not(:last-child) {
+  margin-right: 5px;
+}
+
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
 }
 </style>

@@ -16,7 +16,17 @@ const useDocument = (collection, id) => {
     }
   };
 
-  return { updateDoc, error };
+  const deleteDoc = async () => {
+    error.value = null;
+
+    try {
+      await docRef.delete();
+    } catch (err) {
+      error.value = err.message;
+    }
+  };
+
+  return { updateDoc, deleteDoc, error };
 };
 
 export default useDocument;
