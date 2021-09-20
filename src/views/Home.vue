@@ -77,13 +77,16 @@ export default {
 
 <style lang="scss" scoped>
 .modal-overlay {
-  position: absolute;
+  position: fixed;
+  z-index: 1;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.3);
-  transition: 0.4s;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .invoice-modal-enter-active,

@@ -1,7 +1,8 @@
 <template>
   <div class="modal-wrapper">
-    <form class="modal-inner" @submit.prevent="submitInvoice">
-      <h2>New Invoice</h2>
+    <form class="modal-inner" @submit.prevent="handleSubmit">
+      <h2 v-if="!editInvoice">New Invoice</h2>
+      <h2 v-else>Edit #{{ currentInvoice.id }}</h2>
       <fieldset class="modal-inner__bill-from">
         <legend>Bill From</legend>
         <div>
@@ -192,7 +193,7 @@
           + Add New Item
         </button>
       </fieldset>
-      <div class="modal-inner__buttons">
+      <div v-if="!editInvoice" class="modal-inner__buttons">
         <button
           class="btn btn--light-gray"
           type="button"
@@ -207,6 +208,18 @@
           Save & Send
         </button>
       </div>
+      <div v-else class="modal-inner__buttons modal-inner__buttons--edit">
+        <button
+          class="btn btn--light-gray"
+          type="button"
+          @click="$emit('close')"
+        >
+          Cancel
+        </button>
+        <button class="btn btn--purple" @click="saveChanges">
+          Save Changes
+        </button>
+      </div>
     </form>
   </div>
 </template>
@@ -216,8 +229,10 @@ import { ref, watchEffect } from "vue";
 import useCollection from "../composables/useCollection";
 import getUser from "../composables/getUser";
 import { timestamp } from "../firebase/config";
+import useDocument from "../composables/useDocument";
 
 export default {
+  props: ["edit", "invoice"],
   setup(props, { emit }) {
     const billerStreetAddress = ref(null);
     const billerCity = ref(null);
@@ -245,6 +260,12 @@ export default {
     const { user } = getUser();
     const invoiceItemListError = ref(null);
     const invoiceTotal = ref(null);
+    const editInvoice = ref(props.edit === undefined ? false : props.edit);
+    const currentInvoice = ref(
+      props.invoice === undefined
+        ? null
+        : JSON.parse(JSON.stringify(props.invoice))
+    );
 
     const createId = () => {
       const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -260,6 +281,25 @@ export default {
     };
 
     const { error, addDoc } = useCollection("invoices", createId());
+
+    if (editInvoice.value) {
+      (billerStreetAddress.value = currentInvoice.value.billerStreetAddress),
+        (billerCity.value = currentInvoice.value.billerCity),
+        (billerPostCode.value = currentInvoice.value.billerPostCode),
+        (billerCountry.value = currentInvoice.value.billerCountry),
+        (clientName.value = currentInvoice.value.clientName),
+        (clientEmail.value = currentInvoice.value.clientEmail),
+        (clientStreetAddress.value = currentInvoice.value.clientStreetAddress),
+        (clientCity.value = currentInvoice.value.clientCity),
+        (clientPostCode.value = currentInvoice.value.clientPostCode),
+        (clientCountry.value = currentInvoice.value.clientCountry),
+        (invoiceDate.value = currentInvoice.value.invoiceDate),
+        (paymentTerms.value = currentInvoice.value.paymentTerms),
+        (paymentDue.value = currentInvoice.value.paymentDue),
+        (projectDescription.value = currentInvoice.value.projectDescription),
+        (invoiceItemList.value = currentInvoice.value.invoiceItemList),
+        (invoiceTotal.value = currentInvoice.value.invoiceTotal);
+    }
 
     watchEffect(() => {
       const date = new Date(invoiceDate.value);
@@ -318,6 +358,7 @@ export default {
           clientPostCode: clientPostCode.value,
           clientCountry: clientCountry.value,
           invoiceDate: invoiceDate.value,
+          paymentTerms: paymentTerms.value,
           paymentDue: paymentDue.value,
           projectDescription: projectDescription.value,
           invoiceItemList: invoiceItemList.value,
@@ -343,6 +384,61 @@ export default {
       invoiceStatus.value = "pending";
     };
 
+    const saveChanges = () => {
+      isRequired.value = true;
+    };
+
+    const updateInvoice = async () => {
+      const { updateDoc, error: updateError } = useDocument(
+        "invoices",
+        props.invoice.id
+      );
+
+      invoiceItemListError.value = false;
+      if (!invoiceItemList.value.length) {
+        invoiceItemListError.value = true;
+      }
+
+      if (!invoiceItemListError.value) {
+        sumInvoiceTotal();
+
+        const updates = {
+          billerStreetAddress: billerStreetAddress.value,
+          billerCity: billerCity.value,
+          billerPostCode: billerPostCode.value,
+          billerCountry: billerCountry.value,
+          clientName: clientName.value,
+          clientEmail: clientEmail.value,
+          clientStreetAddress: clientStreetAddress.value,
+          clientCity: clientCity.value,
+          clientPostCode: clientPostCode.value,
+          clientCountry: clientCountry.value,
+          paymentTerms: paymentTerms.value,
+          paymentDue: paymentDue.value,
+          projectDescription: projectDescription.value,
+          invoiceItemList: invoiceItemList.value,
+          invoiceTotal: invoiceTotal.value,
+          invoiceStatus:
+            currentInvoice.value.invoiceStatus === "draft"
+              ? "pending"
+              : currentInvoice.value.invoiceStatus,
+        };
+        await updateDoc(updates);
+
+        if (!updateError.value) {
+          emit("close");
+        }
+      }
+    };
+
+    const handleSubmit = () => {
+      if (editInvoice.value) {
+        updateInvoice();
+      } else {
+        submitInvoice();
+      }
+    };
+
     return {
       billerStreetAddress,
       billerCity,
@@ -360,11 +456,15 @@ export default {
       invoiceItemList,
       addItem,
       deleteItem,
-      submitInvoice,
       saveDraft,
       savePending,
+      saveChanges,
       isRequired,
       invoiceItemListError,
+      editInvoice,
+      currentInvoice,
+      updateInvoice,
+      handleSubmit,
     };
   },
 };
@@ -401,6 +501,10 @@ export default {
   & input,
   & select {
     font-weight: 700;
+
+    &:invalid {
+      border: 1px solid var(--error-color);
+    }
   }
 
   @media (min-width: 900px) {
@@ -535,10 +639,21 @@ export default {
     display: flex;
     justify-content: flex-end;
     margin-top: 20px;
+    margin-bottom: 100px;
     gap: 10px;
+
+    @media (min-width: 900px) {
+      margin-bottom: 0;
+    }
 
     & button:nth-child(1) {
       margin-right: auto;
+    }
+
+    &--edit {
+      & button:nth-child(1) {
+        margin-right: 0;
+      }
     }
   }
 }

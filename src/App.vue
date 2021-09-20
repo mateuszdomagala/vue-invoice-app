@@ -138,10 +138,6 @@ select {
   &:focus {
     border-color: var(--border-color-secondary);
   }
-
-  &:invalid {
-    border: 1px solid var(--error-color);
-  }
 }
 
 label {
