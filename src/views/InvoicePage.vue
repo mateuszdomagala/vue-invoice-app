@@ -19,6 +19,10 @@
           >
         </div>
         <div class="invoice-header__buttons">
+          <button class="btn btn--light-gray" @click="toggleInvoiceModal">
+            Edit
+          </button>
+          <button class="btn btn--error" @click="toggleModal">Delete</button>
           <button
             class="btn btn--purple"
             @click="updateStatus"
@@ -26,7 +30,6 @@
           >
             Mark as Paid
           </button>
-          <button class="btn btn--error" @click="toggleModal">Delete</button>
         </div>
       </div>
       <div class="invoice-body">
@@ -100,6 +103,10 @@
     <div v-else>{{ error }}</div>
   </div>
   <div v-if="invoice" class="mobile-buttons">
+    <button class="btn btn--light-gray" @click="toggleInvoiceModal">
+      Edit
+    </button>
+    <button class="btn btn--error" @click="toggleModal">Delete</button>
     <button
       class="btn btn--purple"
       @click="updateStatus"
@@ -107,7 +114,6 @@
     >
       Mark as Paid
     </button>
-    <button class="btn btn--error" @click="toggleModal">Delete</button>
   </div>
   <transition name="modal">
     <modal v-if="showModal">
@@ -126,27 +132,43 @@
       </template>
     </modal>
   </transition>
+  <div :class="{ 'modal-overlay': showInvoiceModal }">
+    <transition name="invoice-modal">
+      <invoice-modal
+        v-if="showInvoiceModal"
+        @close="toggleInvoiceModal"
+        :edit="true"
+        :invoice="invoice"
+      />
+    </transition>
+  </div>
 </template>
 
 <script>
 import getDocument from "../composables/getDocument";
 import useDocument from "../composables/useDocument";
 import Modal from "../components/Modal.vue";
+import InvoiceModal from "../components/InvoiceModal";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 
 export default {
   name: "InvoicePage",
   props: ["id"],
-  components: { Modal },
+  components: { Modal, InvoiceModal },
   setup(props) {
     const { invoice, error } = getDocument("invoices", props.id);
     const { updateDoc, deleteDoc } = useDocument("invoices", props.id);
     const showModal = ref(false);
+    const showInvoiceModal = ref(false);
     const router = useRouter();
 
     const toggleModal = () => {
       showModal.value = !showModal.value;
+    };
+
+    const toggleInvoiceModal = () => {
+      showInvoiceModal.value = !showInvoiceModal.value;
     };
 
     const updateStatus = async () => {
@@ -167,6 +189,8 @@ export default {
       deleteInvoice,
       showModal,
       toggleModal,
+      showInvoiceModal,
+      toggleInvoiceModal,
     };
   },
 };
@@ -374,6 +398,7 @@ export default {
   padding: 25px;
   background-color: var(--background-box-color);
   box-shadow: rgba(73, 73, 94, 0.2) 0px 7px 29px 0px;
+  text-align: center;
 
   @media (min-width: 700px) {
     display: none;
@@ -384,6 +409,19 @@ button:not(:last-child) {
   margin-right: 5px;
 }
 
+.modal-overlay {
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .modal-enter-active,
 .modal-leave-active {
   transition: opacity 0.5s ease;
@@ -392,5 +430,14 @@ button:not(:last-child) {
 .modal-enter-from,
 .modal-leave-to {
   opacity: 0;
+}
+
+.invoice-modal-enter-active,
+.invoice-modal-leave-active {
+  transition: 0.4s ease all;
+}
+.invoice-modal-enter-from,
+.invoice-modal-leave-to {
+  transform: translateX(-660px);
 }
 </style>
