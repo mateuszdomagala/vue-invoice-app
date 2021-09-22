@@ -1,146 +1,150 @@
 <template>
   <div class="container">
-    <router-link :to="{ name: 'Home' }"
-      ><img src="../assets/icon-arrow-left.svg" alt="go back icon" />Go
-      back</router-link
-    >
-    <div v-if="invoice">
-      <div class="invoice-header">
-        <div class="invoice-header__status">
-          <span>Status</span>
-          <span
-            class="status"
-            :class="{
-              draft: invoice.invoiceStatus == 'draft',
-              pending: invoice.invoiceStatus == 'pending',
-              paid: invoice.invoiceStatus == 'paid',
-            }"
-            >{{ invoice.invoiceStatus }}</span
-          >
-        </div>
-        <div class="invoice-header__buttons">
-          <button class="btn btn--light-gray" @click="toggleInvoiceModal">
-            Edit
-          </button>
-          <button class="btn btn--error" @click="toggleModal">Delete</button>
-          <button
-            class="btn btn--purple"
-            @click="updateStatus"
-            v-if="invoice.invoiceStatus == 'pending'"
-          >
-            Mark as Paid
-          </button>
-        </div>
-      </div>
-      <div class="invoice-body">
-        <div class="invoice-body__from">
-          <div>
-            <h3 class="invoice-body__id">
-              <span class="hash">#</span>{{ invoice.id }}
-            </h3>
-            <p>{{ invoice.projectDescription }}</p>
+    <div class="container-invoice">
+      <router-link :to="{ name: 'Home' }"
+        ><img src="../assets/icon-arrow-left.svg" alt="go back icon" />Go
+        back</router-link
+      >
+      <div v-if="invoice">
+        <div class="invoice-header">
+          <div class="invoice-header__status">
+            <span>Status</span>
+            <span
+              class="status"
+              :class="{
+                draft: invoice.invoiceStatus == 'draft',
+                pending: invoice.invoiceStatus == 'pending',
+                paid: invoice.invoiceStatus == 'paid',
+              }"
+              >{{ invoice.invoiceStatus }}</span
+            >
           </div>
-          <div>
-            <p>{{ invoice.billerStreetAddress }}</p>
-            <p>{{ invoice.billerCity }}</p>
-            <p>{{ invoice.billerPostCode }}</p>
-            <p>{{ invoice.billerCountry }}</p>
+          <div class="invoice-header__buttons">
+            <button class="btn btn--light-gray" @click="toggleInvoiceModal">
+              Edit
+            </button>
+            <button class="btn btn--error" @click="toggleModal">Delete</button>
+            <button
+              class="btn btn--purple"
+              @click="updateStatus"
+              v-if="invoice.invoiceStatus == 'pending'"
+            >
+              Mark as Paid
+            </button>
           </div>
         </div>
-        <div class="invoice-body__to">
-          <div>
+        <div class="invoice-body">
+          <div class="invoice-body__from">
             <div>
-              <h3 class="invoice-body__heading">Invoice Date</h3>
-              <p class="invoice-body__text">{{ invoice.invoiceDate }}</p>
+              <h3 class="invoice-body__id">
+                <span class="hash">#</span>{{ invoice.id }}
+              </h3>
+              <p>{{ invoice.projectDescription }}</p>
             </div>
             <div>
-              <h3 class="invoice-body__heading">Payment Due</h3>
-              <p class="invoice-body__text">{{ invoice.paymentDue }}</p>
+              <p>{{ invoice.billerStreetAddress }}</p>
+              <p>{{ invoice.billerCity }}</p>
+              <p>{{ invoice.billerPostCode }}</p>
+              <p>{{ invoice.billerCountry }}</p>
             </div>
           </div>
-          <div>
-            <h3 class="invoice-body__heading">Bill To</h3>
-            <p class="invoice-body__text">{{ invoice.clientName }}</p>
-            <p>{{ invoice.clientStreetAddress }}</p>
-            <p>{{ invoice.clientCity }}</p>
-            <p>{{ invoice.clientPostCode }}</p>
-            <p>{{ invoice.clientCountry }}</p>
+          <div class="invoice-body__to">
+            <div>
+              <div>
+                <h3 class="invoice-body__heading">Invoice Date</h3>
+                <p class="invoice-body__text">{{ invoice.invoiceDate }}</p>
+              </div>
+              <div>
+                <h3 class="invoice-body__heading">Payment Due</h3>
+                <p class="invoice-body__text">{{ invoice.paymentDue }}</p>
+              </div>
+            </div>
+            <div>
+              <h3 class="invoice-body__heading">Bill To</h3>
+              <p class="invoice-body__text">{{ invoice.clientName }}</p>
+              <p>{{ invoice.clientStreetAddress }}</p>
+              <p>{{ invoice.clientCity }}</p>
+              <p>{{ invoice.clientPostCode }}</p>
+              <p>{{ invoice.clientCountry }}</p>
+            </div>
+            <div>
+              <h3 class="invoice-body__heading">Sent to</h3>
+              <p class="invoice-body__text">{{ invoice.clientEmail }}</p>
+            </div>
           </div>
-          <div>
-            <h3 class="invoice-body__heading">Sent to</h3>
-            <p class="invoice-body__text">{{ invoice.clientEmail }}</p>
-          </div>
-        </div>
-        <div class="invoice-body__item-list">
-          <div class="item-list__header">
-            <p>Item Name</p>
-            <p>QTY.</p>
-            <p>Price</p>
-            <p>Total</p>
-          </div>
-          <div
-            v-for="item in invoice.invoiceItemList"
-            :key="item.id"
-            class="item-list__item"
-          >
-            <p>
-              {{ item.itemName }}
-              <span class="item-list__item-mobile"
-                >{{ item.qty }} x ${{ item.price }}</span
-              >
-            </p>
-            <p class="item-list__item-desktop">{{ item.qty }}</p>
-            <p class="item-list__item-desktop">{{ item.price }}</p>
-            <p>${{ item.total }}</p>
-          </div>
-          <div class="item-list__footer">
-            <p>Amount Due</p>
-            <p>${{ invoice.invoiceTotal }}</p>
+          <div class="invoice-body__item-list">
+            <div class="item-list__header">
+              <p>Item Name</p>
+              <p>QTY.</p>
+              <p>Price</p>
+              <p>Total</p>
+            </div>
+            <div
+              v-for="item in invoice.invoiceItemList"
+              :key="item.id"
+              class="item-list__item"
+            >
+              <p>
+                {{ item.itemName }}
+                <span class="item-list__item-mobile"
+                  >{{ item.qty }} x ${{ item.price }}</span
+                >
+              </p>
+              <p class="item-list__item-desktop">{{ item.qty }}</p>
+              <p class="item-list__item-desktop">{{ item.price }}</p>
+              <p>${{ item.total }}</p>
+            </div>
+            <div class="item-list__footer">
+              <p>Amount Due</p>
+              <p>${{ invoice.invoiceTotal }}</p>
+            </div>
           </div>
         </div>
       </div>
+      <div v-else>{{ error }}</div>
     </div>
-    <div v-else>{{ error }}</div>
-  </div>
-  <div v-if="invoice" class="mobile-buttons">
-    <button class="btn btn--light-gray" @click="toggleInvoiceModal">
-      Edit
-    </button>
-    <button class="btn btn--error" @click="toggleModal">Delete</button>
-    <button
-      class="btn btn--purple"
-      @click="updateStatus"
-      v-if="invoice.invoiceStatus == 'pending'"
-    >
-      Mark as Paid
-    </button>
-  </div>
-  <transition name="modal">
-    <modal v-if="showModal">
-      <template v-slot:header>
-        <h3>Confirm Deletion</h3>
-      </template>
-      <template v-slot:body>
-        <p>
-          Are you sure you want to delete invoice #{{ invoice.id }}? This action
-          cannot be undone.
-        </p>
-      </template>
-      <template v-slot:footer>
-        <button class="btn btn--light-gray" @click="toggleModal">Close</button>
-        <button class="btn btn--error" @click="deleteInvoice">Delete</button>
-      </template>
-    </modal>
-  </transition>
-  <div :class="{ 'modal-overlay': showInvoiceModal }">
-    <transition name="invoice-modal">
-      <invoice-modal
-        v-if="showInvoiceModal"
-        @close="toggleInvoiceModal"
-        :edit="true"
-        :invoice="invoice"
-      />
+    <div v-if="invoice" class="mobile-buttons">
+      <button class="btn btn--light-gray" @click="toggleInvoiceModal">
+        Edit
+      </button>
+      <button class="btn btn--error" @click="toggleModal">Delete</button>
+      <button
+        class="btn btn--purple"
+        @click="updateStatus"
+        v-if="invoice.invoiceStatus == 'pending'"
+      >
+        Mark as Paid
+      </button>
+    </div>
+    <transition name="modal">
+      <modal v-if="showModal">
+        <template v-slot:header>
+          <h3>Confirm Deletion</h3>
+        </template>
+        <template v-slot:body>
+          <p>
+            Are you sure you want to delete invoice #{{ invoice.id }}? This
+            action cannot be undone.
+          </p>
+        </template>
+        <template v-slot:footer>
+          <button class="btn btn--light-gray" @click="toggleModal">
+            Close
+          </button>
+          <button class="btn btn--error" @click="deleteInvoice">Delete</button>
+        </template>
+      </modal>
     </transition>
+    <div :class="{ 'modal-overlay': showInvoiceModal }">
+      <transition name="invoice-modal">
+        <invoice-modal
+          v-if="showInvoiceModal"
+          @close="toggleInvoiceModal"
+          :edit="true"
+          :invoice="invoice"
+        />
+      </transition>
+    </div>
   </div>
 </template>
 
@@ -198,28 +202,31 @@ export default {
 
 <style lang="scss" scoped>
 .container {
-  margin: 120px auto 50px auto;
-  padding: 20px;
-  max-width: 700px;
   width: 100%;
 
-  @media (min-width: 900px) {
-    margin-top: 50px;
-  }
+  &-invoice {
+    margin: 120px auto 50px auto;
+    padding: 20px;
+    max-width: 700px;
 
-  a {
-    text-decoration: none;
-    color: inherit;
-    font-size: 0.75rem;
-    font-weight: 700;
-    transition: 0.2s;
-
-    img {
-      padding-right: 15px;
+    @media (min-width: 900px) {
+      margin-top: 50px;
     }
 
-    &:hover {
-      color: var(--button-color-primary);
+    a {
+      text-decoration: none;
+      color: inherit;
+      font-size: 0.75rem;
+      font-weight: 700;
+      transition: 0.2s;
+
+      img {
+        padding-right: 15px;
+      }
+
+      &:hover {
+        color: var(--button-color-primary);
+      }
     }
   }
 }

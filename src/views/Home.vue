@@ -1,10 +1,10 @@
 <template>
-  <div :class="{ 'modal-overlay': newInvoice }">
-    <transition name="invoice-modal">
-      <invoice-modal v-if="newInvoice" @close="toggleInvoiceModal" />
-    </transition>
-  </div>
   <div class="container">
+    <div :class="{ 'modal-overlay': newInvoice }">
+      <transition name="invoice-modal">
+        <invoice-modal v-if="newInvoice" @close="toggleInvoiceModal" />
+      </transition>
+    </div>
     <div class="header">
       <div class="header__invoices">
         <h1>Invoices</h1>
@@ -134,6 +134,11 @@ export default {
 
     h1 {
       font-weight: 700;
+      font-size: 1.1rem;
+
+      @media (min-width: 700px) {
+        font-size: 2rem;
+      }
     }
 
     p {
