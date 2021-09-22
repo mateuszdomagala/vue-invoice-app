@@ -56,4 +56,13 @@ const router = createRouter({
   routes,
 });
 
+router.afterEach((to, from) => {
+  if (from.name === "InvoicePage") {
+    to.meta.transition = "slide-right";
+  }
+  if (to.name === "InvoicePage") {
+    to.meta.transition = "slide-left";
+  }
+});
+
 export default router;
