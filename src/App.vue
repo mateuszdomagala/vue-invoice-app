@@ -75,13 +75,14 @@ body {
   color: var(--font-color-primary);
   background-color: var(--background-color);
   transition: 0.2s;
+  overflow-x: hidden;
+  overflow-y: scroll;
 }
 
 .wrapper {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  overflow-x: hidden;
 
   @media (min-width: 900px) {
     flex-direction: row;

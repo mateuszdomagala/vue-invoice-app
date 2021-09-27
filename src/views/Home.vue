@@ -35,6 +35,7 @@ import InvoiceModal from "../components/InvoiceModal.vue";
 import InvoicesList from "../components/InvoicesList.vue";
 import FilterByStatus from "../components/FilterByStatus.vue";
 import getCollection from "../composables/getCollection";
+import getUser from "../composables/getUser";
 
 import { computed, ref } from "vue";
 
@@ -43,7 +44,12 @@ export default {
   components: { InvoiceModal, InvoicesList, FilterByStatus },
   setup() {
     const newInvoice = ref(false);
-    const { invoices, error } = getCollection("invoices", "timestamp");
+    const { user } = getUser();
+    const { invoices, error } = getCollection("invoices", "timestamp", [
+      "userId",
+      "==",
+      user.value.uid,
+    ]);
     const checkedStatuses = ref([]);
 
     const toggleInvoiceModal = () => {

@@ -5,7 +5,7 @@
         ><img src="../assets/icon-arrow-left.svg" alt="go back icon" />Go
         back</router-link
       >
-      <div v-if="invoice">
+      <div v-if="invoice && ownership">
         <div class="invoice-header">
           <div class="invoice-header__status">
             <span>Status</span>
@@ -101,7 +101,11 @@
           </div>
         </div>
       </div>
-      <div v-else>{{ error }}</div>
+      <div v-if="error">{{ error }}</div>
+      <div v-if="invoice && !ownership">
+        That invoice doesn't exist or you have insufficient permissions to view
+        it.
+      </div>
     </div>
     <div v-if="invoice" class="mobile-buttons">
       <button class="btn btn--light-gray" @click="toggleInvoiceModal">
@@ -153,8 +157,9 @@ import getDocument from "../composables/getDocument";
 import useDocument from "../composables/useDocument";
 import Modal from "../components/Modal.vue";
 import InvoiceModal from "../components/InvoiceModal";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
+import getUser from "../composables/getUser";
 
 export default {
   name: "InvoicePage",
@@ -166,6 +171,12 @@ export default {
     const showModal = ref(false);
     const showInvoiceModal = ref(false);
     const router = useRouter();
+    const { user } = getUser();
+
+    const ownership = computed(
+      () =>
+        invoice.value && user.value && user.value.uid == invoice.value.userId
+    );
 
     const toggleModal = () => {
       showModal.value = !showModal.value;
@@ -186,9 +197,17 @@ export default {
       router.push({ name: "Home" });
     };
 
+    router.afterEach((to, from) => {
+      if (from.name === "InvoicePage" && showModal.value) {
+        to.meta.transition = "fade";
+        showModal.value = false;
+      }
+    });
+
     return {
       invoice,
       error,
+      ownership,
       updateStatus,
       deleteInvoice,
       showModal,
