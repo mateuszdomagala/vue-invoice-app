@@ -4,6 +4,7 @@ import Home from "../views/Home.vue";
 import InvoicePage from "../views/InvoicePage.vue";
 import Signup from "../views/Signup.vue";
 import Login from "../views/Login.vue";
+import NotFound from "../views/NotFound.vue";
 
 const requireAuth = (to, from, next) => {
   const user = auth.currentUser;
@@ -49,6 +50,11 @@ const routes = [
     component: Login,
     beforeEnter: isLoggedIn,
   },
+  {
+    path: "/:pathMatch(.*)*",
+    name: "NotFound",
+    component: NotFound,
+  }
 ];
 
 const router = createRouter({
